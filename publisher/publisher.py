@@ -4,7 +4,7 @@ import time
 from random import randrange
 
 
-broker = 'localhost'
+broker = 'mosquitto_broker'
 port = 1883
 topic = 'test/topic1'
 id = f"pub_{randrange(10)}"

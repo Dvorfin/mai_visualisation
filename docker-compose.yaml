@@ -1,0 +1,45 @@
+version: '3.5'
+
+services:
+
+  mosquitto:
+    container_name: mosquitto_broker
+    image: eclipse-mosquitto
+    ports:
+      - 1883:1883
+      - 9001:9001
+    networks:
+      - mqtt_network
+    volumes:
+      - ./mosquitto/config:/mosquitto/config	# проброс файла настройки в контейнер
+      - ./mosquitto/data:/mosquitto/data
+      - ./mosquitto/log:/mosquitto/log
+
+
+
+  publisher:
+    build: ./publisher    # сборка контейнера по докер файлу 
+    container_name: publisher   # название контейнера
+    depends_on:   # запустится только после запуска контейнера эклипс москито
+      - mosquitto   
+    networks:
+      - mqtt_network
+
+
+  # subscriber:
+  #   build: ./subscriber   
+  #   container_name: subscriber
+  #   depends_on:   # запустится только после запуска контейнера эклипс москито
+  #     - mosquitto
+  #   ports:
+  #     - 1883:1883
+  #   networks:
+  #     - mqtt
+
+
+networks:
+  mqtt_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.18.0.0/16
