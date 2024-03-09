@@ -26,15 +26,13 @@ services:
       - mqtt_network
 
 
-  # subscriber:
-  #   build: ./subscriber   
-  #   container_name: subscriber
-  #   depends_on:   # запустится только после запуска контейнера эклипс москито
-  #     - mosquitto
-  #   ports:
-  #     - 1883:1883
-  #   networks:
-  #     - mqtt
+  subscriber:
+    build: ./subscriber   
+    container_name: subscriber
+    depends_on:   # запустится только после запуска контейнера эклипс москито
+      - mosquitto
+    networks:
+      - mqtt_network
 
 
 networks:
