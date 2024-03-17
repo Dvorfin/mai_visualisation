@@ -7,7 +7,7 @@ services:
     image: eclipse-mosquitto
     ports:
       - 1883:1883
-      - 9001:9001
+
     networks:
       - mqtt_network
     volumes:
@@ -26,13 +26,66 @@ services:
       - mqtt_network
 
 
-  subscriber:
-    build: ./subscriber   
-    container_name: subscriber
-    depends_on:   # запустится только после запуска контейнера эклипс москито
-      - mosquitto
+  # subscriber:
+  #   build: ./subscriber   
+  #   container_name: subscriber
+  #   depends_on:   # запустится только после запуска контейнера эклипс москито
+  #     - mosquitto
+  #   networks:
+  #     - mqtt_network
+
+
+  grafana:
+    image: grafana/grafana:8.0.6-ubuntu
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - grafana-configs:/etc/grafana
+    depends_on:
+      - influxdb
     networks:
       - mqtt_network
+
+
+  influxdb:
+    image: influxdb:1.8-alpine
+    container_name: influxdb
+    depends_on:
+      - mosquitto
+    environment:
+      - INFLUXDB_DB=telegraf
+      - INFLUXDB_ADMIN_USER=admin
+      - INFLUXDB_ADMIN_PASSWORD=admin
+    ports:
+      - '8086:8086'
+    volumes:
+      - influxdb_data:/var/lib/influxdb
+    networks:
+      - mqtt_network
+    
+  
+
+  telegraf:
+    image: telegraf
+    volumes:
+      - ./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+    depends_on:
+      - influxdb
+    ports:
+      - '8125:8125'
+    networks:
+      - mqtt_network
+      
+
+
+volumes:
+  grafana-logs:
+  grafana-data:
+  grafana-configs:
+  influxdb_data:
+
 
 
 networks:

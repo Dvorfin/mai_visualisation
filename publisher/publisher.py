@@ -17,7 +17,7 @@ id = f"pub_{randrange(10)}"     # id паблишера
 json_path = "/home/toor/mai_visualisation/mock/json_data/"
 
 
-S
+
 FIRST_RECONNECT_DELAY = 1
 RECONNECT_RATE = 2
 MAX_RECONNECT_COUNT = 12
@@ -68,7 +68,7 @@ def publish(client):
             print(f"Failed to send message to topic {topic}")
         msg_count += 1
         #if msg_count >= len(json_array):
-        if msg_count >= 20:
+        if msg_count >= 1000:
             break
 
 
